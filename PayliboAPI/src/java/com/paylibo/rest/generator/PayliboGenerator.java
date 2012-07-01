@@ -1,7 +1,7 @@
 /**
  *  Copyright (c) 2012, Paylibo (www.paylibo.com).
  */
-package com.paylibo.generator;
+package com.paylibo.rest.generator;
 
 import com.paylibo.account.BankAccount;
 import com.paylibo.qr.PayliboQRUtils;

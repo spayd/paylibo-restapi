@@ -52,7 +52,9 @@ public class PayliboStringValidator {
             JsonFactory f = new JsonFactory();
             JsonGenerator g = f.createJsonGenerator(response.getOutputStream());
             g.writeStartObject();
+            //TODO:Add persistence API here to fetch the status of the IBAN
             g.writeStringField("result", "unknown");
+            g.writeStringField("iban", iban);
             g.writeEndObject();
             g.close();
 

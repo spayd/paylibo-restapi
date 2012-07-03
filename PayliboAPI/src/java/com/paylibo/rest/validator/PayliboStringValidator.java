@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.paylibo.rest.utils.JsonErrorSerializer;
 import com.paylibo.utilities.PayliboValidationError;
 import com.paylibo.utilities.PayliboValidator;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,6 +42,22 @@ public class PayliboStringValidator {
             } catch (IOException ex) {
                 Logger.getLogger(PayliboStringValidator.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "iban")
+    public String validateIBANNumber(@RequestParam(value = "iban") String iban, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            JsonFactory f = new JsonFactory();
+            JsonGenerator g = f.createJsonGenerator(response.getOutputStream());
+            g.writeStartObject();
+            g.writeStringField("result", "unknown");
+            g.writeEndObject();
+            g.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(PayliboStringValidator.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

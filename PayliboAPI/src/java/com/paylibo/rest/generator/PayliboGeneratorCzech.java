@@ -64,7 +64,7 @@ public class PayliboGeneratorCzech {
     public String payliboStringFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "accountNumber", required = true) String accountNumber,
             @RequestParam(value = "accountPrefix", required = false) String accountPrefix,
-            @RequestParam(value = "bankCode", required = false) String bankCode,
+            @RequestParam(value = "bankCode", required = true) String bankCode,
             @RequestParam(value = "amount", required = false) Number amount,
             @RequestParam(value = "currency", required = false) String currency,
             @RequestParam(value = "vs", required = false) String vs,

@@ -1,24 +1,31 @@
 /**
- *  Copyright (c) 2012, Paylibo (www.paylibo.com).
+ * Copyright (c) 2012, Paylibo (www.paylibo.com).
  */
 package com.paylibo.rest.generator;
 
 import com.paylibo.account.BankAccount;
 import com.paylibo.qr.PayliboQRUtils;
+import com.paylibo.rest.utils.JsonErrorSerializer;
 import com.paylibo.string.Paylibo;
 import com.paylibo.string.PayliboMap;
 import com.paylibo.string.PayliboParameters;
+import com.paylibo.utilities.PayliboValidationError;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -27,6 +34,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "generator")
 public class PayliboGenerator {
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false);
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
+    }
+    
+    @ExceptionHandler(Exception.class)
+    public String handleException(Exception exception, HttpServletRequest request, HttpServletResponse response) {
+        response.setStatus(400);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        List<PayliboValidationError> errors = new LinkedList<PayliboValidationError>();
+        PayliboValidationError error = new PayliboValidationError();
+        error.setErrorCode(PayliboValidationError.ERROR_REQUEST_GENERIC);
+        error.setErrorDescription(exception.getMessage()!=null?exception.getMessage():exception.toString());
+        errors.add(error);
+        try {
+            JsonErrorSerializer.serializeErrorsInStream(response.getOutputStream(), errors);
+        } catch (IOException ex) {
+            Logger.getLogger(PayliboGeneratorCzech.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 
     private String payliboFromParameters(
             String iban,
@@ -81,6 +113,8 @@ public class PayliboGenerator {
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message) throws IOException {
         // flush the output
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/plain");
         response.getOutputStream().print(this.payliboFromParameters(
                 iban,
                 bic,
@@ -109,6 +143,7 @@ public class PayliboGenerator {
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "size", required = false) Integer size) throws IOException {
         // flush the output
+        response.setContentType("image/png");
         String payliboString = this.payliboFromParameters(
                 iban,
                 bic,

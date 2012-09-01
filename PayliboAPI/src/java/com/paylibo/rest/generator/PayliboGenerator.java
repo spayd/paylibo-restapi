@@ -117,7 +117,7 @@ public class PayliboGenerator {
         // flush the output
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
-        response.getOutputStream().print(this.payliboFromParameters(
+        response.getWriter().print(this.payliboFromParameters(
                 iban,
                 bic,
                 amount,
@@ -129,7 +129,7 @@ public class PayliboGenerator {
                 message,
                 request.getParameterMap(),
                 transliterate));
-        response.getOutputStream().flush();
+        response.getWriter().flush();
         return null;
     }
 

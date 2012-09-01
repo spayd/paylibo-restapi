@@ -111,7 +111,7 @@ public class PayliboGeneratorCzech {
         // flush the output
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
-        response.getOutputStream().print(this.payliboFromParameters(
+        response.getWriter().print(this.payliboFromParameters(
                 accountNumber, 
                 accountPrefix, 
                 bankCode, 
@@ -125,7 +125,7 @@ public class PayliboGeneratorCzech {
                 message, 
                 request.getParameterMap(),
                 transliterate));
-        response.getOutputStream().flush();
+        response.getWriter().flush();
         return null;
     }
     

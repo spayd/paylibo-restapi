@@ -106,7 +106,7 @@ public class PayliboGeneratorCzech {
             @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
-            @RequestParam(value = "transliterate", required = false) boolean transliterate) throws IOException {
+            @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
 
         // flush the output
         response.setCharacterEncoding("UTF-8");
@@ -143,7 +143,7 @@ public class PayliboGeneratorCzech {
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "size", required = false) Integer size,
-            @RequestParam(value = "transliterate", required = false) boolean transliterate) throws IOException {
+            @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
 
         // flush the output
         response.setContentType("image/png");

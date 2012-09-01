@@ -113,7 +113,7 @@ public class PayliboGenerator {
             @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
-            @RequestParam(value = "compress", required = false) boolean transliterate) throws IOException {
+            @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
         // flush the output
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
@@ -145,7 +145,7 @@ public class PayliboGenerator {
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "size", required = false) Integer size,
-            @RequestParam(value = "compress", required = false) boolean transliterate) throws IOException {
+            @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
         // flush the output
         response.setContentType("image/png");
         String payliboString = this.payliboFromParameters(

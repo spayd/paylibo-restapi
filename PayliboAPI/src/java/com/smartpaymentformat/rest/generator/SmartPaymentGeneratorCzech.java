@@ -1,15 +1,15 @@
 /**
- *  Copyright (c) 2012, Paylibo (www.paylibo.com).
+ *  Copyright (c) 2012, SmartPayment (www.SmartPayment.com).
  */
-package com.paylibo.rest.generator;
+package com.smartpaymentformat.rest.generator;
 
-import com.paylibo.qr.PayliboQRUtils;
-import com.paylibo.account.CzechBankAccount;
-import com.paylibo.rest.utils.JsonErrorSerializer;
-import com.paylibo.string.Paylibo;
-import com.paylibo.string.PayliboMap;
-import com.paylibo.string.PayliboParameters;
-import com.paylibo.utilities.PayliboValidationError;
+import com.smartpaymentformat.account.CzechBankAccount;
+import com.smartpaymentformat.qr.SmartPaymentQRUtils;
+import com.smartpaymentformat.rest.utils.JsonErrorSerializer;
+import com.smartpaymentformat.string.SmartPayment;
+import com.smartpaymentformat.string.SmartPaymentMap;
+import com.smartpaymentformat.string.SmartPaymentParameters;
+import com.smartpaymentformat.utilities.SmartPaymentValidationError;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping(value = "generator/czech")
-public class PayliboGeneratorCzech {
+public class SmartPaymentGeneratorCzech {
     
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -47,20 +47,20 @@ public class PayliboGeneratorCzech {
         response.setStatus(400);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        List<PayliboValidationError> errors = new LinkedList<PayliboValidationError>();
-        PayliboValidationError error = new PayliboValidationError();
-        error.setErrorCode(PayliboValidationError.ERROR_REQUEST_GENERIC);
+        List<SmartPaymentValidationError> errors = new LinkedList<SmartPaymentValidationError>();
+        SmartPaymentValidationError error = new SmartPaymentValidationError();
+        error.setErrorCode(SmartPaymentValidationError.ERROR_REQUEST_GENERIC);
         error.setErrorDescription(exception.getMessage()!=null?exception.getMessage():exception.toString());
         errors.add(error);
         try {
             JsonErrorSerializer.serializeErrorsInStream(response.getOutputStream(), errors);
         } catch (IOException ex) {
-            Logger.getLogger(PayliboGeneratorCzech.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SmartPaymentGeneratorCzech.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-    private String payliboFromParameters(
+    private String paymentStringFromParameters(
             String accountNumber,
             String accountPrefix,
             String bankCode,
@@ -77,7 +77,7 @@ public class PayliboGeneratorCzech {
         // prepare the generic bank account
         CzechBankAccount account = new CzechBankAccount(accountPrefix, accountNumber, bankCode);
         // prepare the common parameters
-        PayliboParameters parameters = new PayliboParameters();
+        SmartPaymentParameters parameters = new SmartPaymentParameters();
         parameters.setAmount(amount);
         parameters.setCurrency(currency);
         parameters.setDate(date);
@@ -85,16 +85,16 @@ public class PayliboGeneratorCzech {
         parameters.setMessage(message);
 
         // prepare the extended parameters
-        PayliboMap map = new PayliboMap(xmap);
+        SmartPaymentMap map = new SmartPaymentMap(xmap);
         map.put("X-VS", vs);
         map.put("X-SS", ss);
         map.put("X-KS", ks);
 
-        return Paylibo.payliboStringFromAccount(account, parameters, map, transliterate);
+        return SmartPayment.paymentStringFromAccount(account, parameters, map, transliterate);
     }
 
     @RequestMapping(value = "string", method = RequestMethod.GET)
-    public String payliboStringFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
+    public String paymentStringFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "accountNumber", required = true) String accountNumber,
             @RequestParam(value = "accountPrefix", required = false) String accountPrefix,
             @RequestParam(value = "bankCode", required = true) String bankCode,
@@ -111,7 +111,7 @@ public class PayliboGeneratorCzech {
         // flush the output
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
-        response.getWriter().print(this.payliboFromParameters(
+        response.getWriter().print(this.paymentStringFromParameters(
                 accountNumber, 
                 accountPrefix, 
                 bankCode, 
@@ -130,7 +130,7 @@ public class PayliboGeneratorCzech {
     }
     
     @RequestMapping(value = "image", method = RequestMethod.GET)
-    public String payliboImageFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
+    public String paymentImageFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "accountNumber", required = true) String accountNumber,
             @RequestParam(value = "accountPrefix", required = false) String accountPrefix,
             @RequestParam(value = "bankCode", required = false) String bankCode,
@@ -147,7 +147,7 @@ public class PayliboGeneratorCzech {
 
         // flush the output
         response.setContentType("image/png");
-        String payliboString = this.payliboFromParameters(
+        String paymentString = this.paymentStringFromParameters(
                 accountNumber, 
                 accountPrefix, 
                 bankCode, 
@@ -161,7 +161,7 @@ public class PayliboGeneratorCzech {
                 message, 
                 request.getParameterMap(),
                 transliterate);
-        BufferedImage qrCode = PayliboQRUtils.getQRCode(size, payliboString);
+        BufferedImage qrCode = SmartPaymentQRUtils.getQRCode(size, paymentString);
         ImageIO.write(qrCode, "PNG", response.getOutputStream());
         response.getOutputStream().flush();
         return null;

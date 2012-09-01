@@ -1,12 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ *  Copyright (c) 2012, SmartPayment (www.SmartPayment.com).
  */
-package com.paylibo.rest.utils;
+package com.smartpaymentformat.rest.utils;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.paylibo.utilities.PayliboValidationError;
+import com.smartpaymentformat.utilities.SmartPaymentValidationError;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -17,14 +16,14 @@ import java.util.List;
  */
 public class JsonErrorSerializer {
 
-    public static void serializeErrorsInStream(OutputStream stream, List<PayliboValidationError> errors) throws IOException {
+    public static void serializeErrorsInStream(OutputStream stream, List<SmartPaymentValidationError> errors) throws IOException {
         JsonFactory f = new JsonFactory();
         JsonGenerator g = f.createJsonGenerator(stream);
 
         g.writeStartObject();
         g.writeStringField("description", "Errors occurred during the object validation");
         g.writeArrayFieldStart("errors");
-        for (PayliboValidationError error : errors) {
+        for (SmartPaymentValidationError error : errors) {
             g.writeStartObject();
             g.writeStringField("code", error.getErrorCode());
             g.writeStringField("description", error.getErrorDescription());

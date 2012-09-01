@@ -70,7 +70,8 @@ public class PayliboGenerator {
             String identifier,
             Date date,
             String message,
-            Map xmap) {
+            Map xmap,
+            boolean transliterate) {
         // prepare the generic bank account
         BankAccount account = new BankAccount(iban) {
 
@@ -98,7 +99,7 @@ public class PayliboGenerator {
         // prepare the extended parameters
         PayliboMap map = new PayliboMap((Map<String, String[]>) xmap);
 
-        return Paylibo.payliboStringFromAccount(account, parameters, map);
+        return Paylibo.payliboStringFromAccount(account, parameters, map, transliterate);
     }
 
     @RequestMapping(value = "string", method = RequestMethod.GET)
@@ -111,7 +112,8 @@ public class PayliboGenerator {
             @RequestParam(value = "recipientName", required = false) String recipientName,
             @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
-            @RequestParam(value = "message", required = false) String message) throws IOException {
+            @RequestParam(value = "message", required = false) String message,
+            @RequestParam(value = "compress", required = false) boolean transliterate) throws IOException {
         // flush the output
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
@@ -125,7 +127,8 @@ public class PayliboGenerator {
                 identifier,
                 date,
                 message,
-                request.getParameterMap()));
+                request.getParameterMap(),
+                transliterate));
         response.getOutputStream().flush();
         return null;
     }
@@ -141,7 +144,8 @@ public class PayliboGenerator {
             @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
-            @RequestParam(value = "size", required = false) Integer size) throws IOException {
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "compress", required = false) boolean transliterate) throws IOException {
         // flush the output
         response.setContentType("image/png");
         String payliboString = this.payliboFromParameters(
@@ -154,7 +158,8 @@ public class PayliboGenerator {
                 identifier,
                 date,
                 message,
-                request.getParameterMap());
+                request.getParameterMap(),
+                transliterate);
         BufferedImage qrCode = PayliboQRUtils.getQRCode(size, payliboString);
         ImageIO.write(qrCode, "PNG", response.getOutputStream());
         response.getOutputStream().flush();

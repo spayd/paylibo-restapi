@@ -72,7 +72,8 @@ public class PayliboGeneratorCzech {
             String identifier,
             Date date,
             String message,
-            Map xmap) {
+            Map xmap,
+            boolean transliterate) {
         // prepare the generic bank account
         CzechBankAccount account = new CzechBankAccount(accountPrefix, accountNumber, bankCode);
         // prepare the common parameters
@@ -89,7 +90,7 @@ public class PayliboGeneratorCzech {
         map.put("X-SS", ss);
         map.put("X-KS", ks);
 
-        return Paylibo.payliboStringFromAccount(account, parameters, map);
+        return Paylibo.payliboStringFromAccount(account, parameters, map, transliterate);
     }
 
     @RequestMapping(value = "string", method = RequestMethod.GET)
@@ -104,7 +105,8 @@ public class PayliboGeneratorCzech {
             @RequestParam(value = "ss", required = false) String ss,
             @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
-            @RequestParam(value = "message", required = false) String message) throws IOException {
+            @RequestParam(value = "message", required = false) String message,
+            @RequestParam(value = "transliterate", required = false) boolean transliterate) throws IOException {
 
         // flush the output
         response.setCharacterEncoding("UTF-8");
@@ -121,7 +123,8 @@ public class PayliboGeneratorCzech {
                 identifier, 
                 date, 
                 message, 
-                request.getParameterMap()));
+                request.getParameterMap(),
+                transliterate));
         response.getOutputStream().flush();
         return null;
     }
@@ -139,7 +142,8 @@ public class PayliboGeneratorCzech {
             @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
-            @RequestParam(value = "size", required = false) Integer size) throws IOException {
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "transliterate", required = false) boolean transliterate) throws IOException {
 
         // flush the output
         response.setContentType("image/png");
@@ -155,7 +159,8 @@ public class PayliboGeneratorCzech {
                 identifier, 
                 date, 
                 message, 
-                request.getParameterMap());
+                request.getParameterMap(),
+                transliterate);
         BufferedImage qrCode = PayliboQRUtils.getQRCode(size, payliboString);
         ImageIO.write(qrCode, "PNG", response.getOutputStream());
         response.getOutputStream().flush();

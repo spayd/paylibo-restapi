@@ -69,7 +69,6 @@ public class SmartPaymentGeneratorCzech {
             String vs,
             String ks,
             String ss,
-            String identifier,
             Date date,
             String message,
             Map xmap,
@@ -78,10 +77,10 @@ public class SmartPaymentGeneratorCzech {
         CzechBankAccount account = new CzechBankAccount(accountPrefix, accountNumber, bankCode);
         // prepare the common parameters
         SmartPaymentParameters parameters = new SmartPaymentParameters();
+        parameters.setBankAccount(account);
         parameters.setAmount(amount);
         parameters.setCurrency(currency);
         parameters.setDate(date);
-        parameters.setIdentifier(identifier);
         parameters.setMessage(message);
 
         // prepare the extended parameters
@@ -90,7 +89,7 @@ public class SmartPaymentGeneratorCzech {
         map.put("X-SS", ss);
         map.put("X-KS", ks);
 
-        return SmartPayment.paymentStringFromAccount(account, parameters, map, transliterate);
+        return SmartPayment.paymentStringFromAccount(parameters, map, transliterate);
     }
 
     @RequestMapping(value = "string", method = RequestMethod.GET)
@@ -103,7 +102,6 @@ public class SmartPaymentGeneratorCzech {
             @RequestParam(value = "vs", required = false) String vs,
             @RequestParam(value = "ks", required = false) String ks,
             @RequestParam(value = "ss", required = false) String ss,
-            @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
@@ -120,7 +118,6 @@ public class SmartPaymentGeneratorCzech {
                 vs, 
                 ks, 
                 ss, 
-                identifier, 
                 date, 
                 message, 
                 request.getParameterMap(),
@@ -156,7 +153,6 @@ public class SmartPaymentGeneratorCzech {
                 vs, 
                 ks, 
                 ss, 
-                identifier, 
                 date, 
                 message, 
                 request.getParameterMap(),

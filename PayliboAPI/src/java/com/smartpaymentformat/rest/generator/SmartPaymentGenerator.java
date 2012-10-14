@@ -67,13 +67,12 @@ public class SmartPaymentGenerator {
             String currency,
             String sendersReference,
             String recipientName,
-            String identifier,
             Date date,
             String message,
             Map xmap,
             boolean transliterate) {
         // prepare the generic bank account
-        BankAccount account = new BankAccount(iban) {
+        BankAccount account = new BankAccount(iban, bic) {
 
             @Override
             public String getIBAN() {
@@ -84,14 +83,23 @@ public class SmartPaymentGenerator {
             public void setIBAN(String iban) {
                 this.iban = iban;
             }
+
+            @Override
+            public String getBIC() {
+                return bic;
+            }
+
+            @Override
+            public void setBIC(String bic) {
+                this.bic = bic;
+            }
         };
         // prepare the common parameters
         SmartPaymentParameters parameters = new SmartPaymentParameters();
-        parameters.setBic(bic);
+        parameters.setBankAccount(account);
         parameters.setAmount(amount);
         parameters.setCurrency(currency);
         parameters.setDate(date);
-        parameters.setIdentifier(identifier);
         parameters.setMessage(message);
         parameters.setRecipientName(recipientName);
         parameters.setSendersReference(sendersReference);
@@ -99,7 +107,7 @@ public class SmartPaymentGenerator {
         // prepare the extended parameters
         SmartPaymentMap map = new SmartPaymentMap((Map<String, String[]>) xmap);
 
-        return SmartPayment.paymentStringFromAccount(account, parameters, map, transliterate);
+        return SmartPayment.paymentStringFromAccount(parameters, map, transliterate);
     }
 
     @RequestMapping(value = "string", method = RequestMethod.GET)
@@ -110,7 +118,6 @@ public class SmartPaymentGenerator {
             @RequestParam(value = "currency", required = false) String currency,
             @RequestParam(value = "sendersReference", required = false) String sendersReference,
             @RequestParam(value = "recipientName", required = false) String recipientName,
-            @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
@@ -124,7 +131,6 @@ public class SmartPaymentGenerator {
                 currency,
                 sendersReference,
                 recipientName,
-                identifier,
                 date,
                 message,
                 request.getParameterMap(),
@@ -141,7 +147,6 @@ public class SmartPaymentGenerator {
             @RequestParam(value = "currency", required = false) String currency,
             @RequestParam(value = "sendersReference", required = false) String sendersReference,
             @RequestParam(value = "recipientName", required = false) String recipientName,
-            @RequestParam(value = "identifier", required = false) String identifier,
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "size", required = false) Integer size,
@@ -155,7 +160,6 @@ public class SmartPaymentGenerator {
                 currency,
                 sendersReference,
                 recipientName,
-                identifier,
                 date,
                 message,
                 request.getParameterMap(),

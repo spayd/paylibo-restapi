@@ -124,6 +124,7 @@ public class SmartPaymentGenerator {
         // flush the output
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.getWriter().print(this.paymentStringFromParameters(
                 iban,
                 bic,
@@ -154,6 +155,7 @@ public class SmartPaymentGenerator {
             @RequestParam(value = "branding", required = false, defaultValue = "true") boolean branding) throws IOException {
         // flush the output
         response.setContentType("image/png");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         String paymentString = this.paymentStringFromParameters(
                 iban,
                 bic,

@@ -52,6 +52,7 @@ public class SmartPaymentStringValidator {
         List<SmartPaymentValidationError> validationResult = SmartPaymentValidator.validatePaymentString(paymentString);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         if (validationResult == null || validationResult.isEmpty()) {
             try {
                 response.getOutputStream().print("\"OK\"");
@@ -73,6 +74,7 @@ public class SmartPaymentStringValidator {
     public String validateIBANNumber(@RequestParam(value = "iban") String iban, HttpServletRequest request, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         try {
             JsonFactory f = new JsonFactory();
             JsonGenerator g = f.createJsonGenerator(response.getOutputStream());

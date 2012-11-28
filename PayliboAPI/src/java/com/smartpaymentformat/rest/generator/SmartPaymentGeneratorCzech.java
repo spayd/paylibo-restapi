@@ -109,6 +109,7 @@ public class SmartPaymentGeneratorCzech {
         // flush the output
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.getWriter().print(this.paymentStringFromParameters(
                 accountNumber, 
                 accountPrefix, 
@@ -145,6 +146,7 @@ public class SmartPaymentGeneratorCzech {
 
         // flush the output
         response.setContentType("image/png");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         String paymentString = this.paymentStringFromParameters(
                 accountNumber, 
                 accountPrefix, 

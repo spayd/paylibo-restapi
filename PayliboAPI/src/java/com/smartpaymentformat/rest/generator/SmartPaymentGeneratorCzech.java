@@ -47,6 +47,7 @@ public class SmartPaymentGeneratorCzech {
         response.setStatus(400);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         List<SmartPaymentValidationError> errors = new LinkedList<SmartPaymentValidationError>();
         SmartPaymentValidationError error = new SmartPaymentValidationError();
         error.setErrorCode(SmartPaymentValidationError.ERROR_REQUEST_GENERIC);

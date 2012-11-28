@@ -140,7 +140,8 @@ public class SmartPaymentGeneratorCzech {
             @RequestParam(value = "date", required = false) Date date,
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "size", required = false) Integer size,
-            @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
+            @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate,
+            @RequestParam(value = "branding", required = false, defaultValue = "true") boolean branding) throws IOException {
 
         // flush the output
         response.setContentType("image/png");
@@ -157,7 +158,7 @@ public class SmartPaymentGeneratorCzech {
                 message, 
                 request.getParameterMap(),
                 transliterate);
-        BufferedImage qrCode = SmartPaymentQRUtils.getQRCode(size, paymentString);
+        BufferedImage qrCode = SmartPaymentQRUtils.getQRCode(size, paymentString, branding);
         ImageIO.write(qrCode, "PNG", response.getOutputStream());
         response.getOutputStream().flush();
         return null;

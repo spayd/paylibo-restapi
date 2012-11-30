@@ -12,6 +12,7 @@ import com.smartpaymentformat.string.SmartPaymentParameters;
 import com.smartpaymentformat.utilities.SmartPaymentValidationError;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -73,7 +74,7 @@ public class SmartPaymentGeneratorCzech {
             Date date,
             String message,
             Map xmap,
-            boolean transliterate) {
+            boolean transliterate) throws UnsupportedEncodingException {
         // prepare the generic bank account
         CzechBankAccount account = new CzechBankAccount(accountPrefix, accountNumber, bankCode);
         // prepare the common parameters

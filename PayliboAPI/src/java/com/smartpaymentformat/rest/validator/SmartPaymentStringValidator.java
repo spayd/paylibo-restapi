@@ -10,6 +10,7 @@ import com.smartpaymentformat.rest.utils.JsonErrorSerializer;
 import com.smartpaymentformat.utilities.SmartPaymentValidationError;
 import com.smartpaymentformat.utilities.SmartPaymentValidator;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -49,7 +50,7 @@ public class SmartPaymentStringValidator {
     }
 
     @RequestMapping(value = "string")
-    public String validatePaymentString(@RequestParam(value = "paymentString") String paymentString, HttpServletRequest request, HttpServletResponse response) {
+    public String validatePaymentString(@RequestParam(value = "paymentString") String paymentString, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         List<SmartPaymentValidationError> validationResult = SmartPaymentValidator.validatePaymentString(paymentString);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");

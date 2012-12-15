@@ -141,6 +141,37 @@ public class SmartPaymentGenerator {
         response.getWriter().flush();
         return null;
     }
+    
+    @RequestMapping(value = "spayd", method = RequestMethod.GET)
+    public String paymentFileFromAccount(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam(value = "iban", required = true) String iban,
+            @RequestParam(value = "bic", required = false) String bic,
+            @RequestParam(value = "amount", required = false) Number amount,
+            @RequestParam(value = "currency", required = false) String currency,
+            @RequestParam(value = "sendersReference", required = false) String sendersReference,
+            @RequestParam(value = "recipientName", required = false) String recipientName,
+            @RequestParam(value = "date", required = false) Date date,
+            @RequestParam(value = "message", required = false) String message,
+            @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
+        // flush the output
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/x-shortpaymentdescriptor");
+        response.setHeader("Content-Disposition", "attachment; filename=\"payment_info.spayd\"");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.getWriter().print(this.paymentStringFromParameters(
+                iban,
+                bic,
+                amount,
+                currency,
+                sendersReference,
+                recipientName,
+                date,
+                message,
+                request.getParameterMap(),
+                transliterate));
+        response.getWriter().flush();
+        return null;
+    }
 
     @RequestMapping(value = "image", method = RequestMethod.GET)
     public String paymentImageFromAccount(HttpServletRequest request, HttpServletResponse response,

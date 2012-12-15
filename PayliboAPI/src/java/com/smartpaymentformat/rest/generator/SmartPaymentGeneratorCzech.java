@@ -129,6 +129,41 @@ public class SmartPaymentGeneratorCzech {
         return null;
     }
     
+    @RequestMapping(value = "spayd", method = RequestMethod.GET)
+    public String paymentFileFromAccount(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam(value = "accountNumber", required = true) String accountNumber,
+            @RequestParam(value = "accountPrefix", required = false) String accountPrefix,
+            @RequestParam(value = "bankCode", required = true) String bankCode,
+            @RequestParam(value = "amount", required = false) Number amount,
+            @RequestParam(value = "currency", required = false) String currency,
+            @RequestParam(value = "vs", required = false) String vs,
+            @RequestParam(value = "ks", required = false) String ks,
+            @RequestParam(value = "ss", required = false) String ss,
+            @RequestParam(value = "date", required = false) Date date,
+            @RequestParam(value = "message", required = false) String message,
+            @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
+        // flush the output
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/x-shortpaymentdescriptor");
+        response.setHeader("Content-Disposition", "attachment; filename=\"payment_info.spayd\"");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.getWriter().print(this.paymentStringFromParameters(
+                accountNumber, 
+                accountPrefix, 
+                bankCode, 
+                amount, 
+                currency, 
+                vs, 
+                ks, 
+                ss, 
+                date, 
+                message, 
+                request.getParameterMap(),
+                transliterate));
+        response.getWriter().flush();
+        return null;
+    }
+    
     @RequestMapping(value = "image", method = RequestMethod.GET)
     public String paymentImageFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "accountNumber", required = true) String accountNumber,

@@ -18,3 +18,4 @@ nb-configuration.xml
 *.war
 *.ear
 /PayliboAPI/nbproject/private/
+/ShortPaymentAPI/nbproject/private/

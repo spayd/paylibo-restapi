@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2012, SPAYD (www.spayd.org).
+ * Copyright (c) 2012, SPAYD (www.spayd.org).
  */
 package org.spayd.rest.controller.generator;
 
@@ -35,14 +35,14 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping(value = "generator/czech")
 public class SpaydGeneratorCzechController {
-    
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
-    
+
     @ExceptionHandler(Exception.class)
     public String handleException(Exception exception, HttpServletRequest request, HttpServletResponse response) {
         response.setStatus(400);
@@ -52,7 +52,7 @@ public class SpaydGeneratorCzechController {
         List<SpaydValidationError> errors = new LinkedList<SpaydValidationError>();
         SpaydValidationError error = new SpaydValidationError();
         error.setErrorCode(SpaydValidationError.ERROR_REQUEST_GENERIC);
-        error.setErrorDescription(exception.getMessage()!=null?exception.getMessage():exception.toString());
+        error.setErrorDescription(exception.getMessage() != null ? exception.getMessage() : exception.toString());
         errors.add(error);
         try {
             JsonErrorSerializer.serializeErrorsInStream(response.getOutputStream(), errors);
@@ -64,6 +64,7 @@ public class SpaydGeneratorCzechController {
 
     /**
      * Generates the SPAYD string based on the Czech account information.
+     *
      * @param accountNumber A recipient account number
      * @param accountPrefix A recipient account number prefix
      * @param bankCode A recipient account bank code
@@ -75,9 +76,10 @@ public class SpaydGeneratorCzechController {
      * @param date Due date in the YYYY-MM-DD format.
      * @param message A message to be attached with the payment
      * @param xmap A map of extended parameters
-     * @param transliterate A flag that indicates the characters should be transliterated to ASCII
+     * @param transliterate A flag that indicates the characters should be
+     * transliterated to ASCII
      * @return A SPAYD string with the payment information.
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     private String paymentStringFromParameters(
             String accountNumber,
@@ -129,23 +131,24 @@ public class SpaydGeneratorCzechController {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.getWriter().print(this.paymentStringFromParameters(
-                accountNumber, 
-                accountPrefix, 
-                bankCode, 
-                amount, 
-                currency, 
-                vs, 
-                ks, 
-                ss, 
-                date, 
-                message, 
+        final String paymentString = this.paymentStringFromParameters(
+                accountNumber,
+                accountPrefix,
+                bankCode,
+                amount,
+                currency,
+                vs,
+                ks,
+                ss,
+                date,
+                message,
                 request.getParameterMap(),
-                transliterate));
+                transliterate);
+        response.getWriter().print(paymentString);
         response.getWriter().flush();
         return null;
     }
-    
+
     @RequestMapping(value = "spayd", method = RequestMethod.GET)
     public String paymentFileFromAccount(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "accountNumber", required = true) String accountNumber,
@@ -164,23 +167,24 @@ public class SpaydGeneratorCzechController {
         response.setContentType("application/x-shortpaymentdescriptor");
         response.setHeader("Content-Disposition", "attachment; filename=\"payment_info.spayd\"");
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.getWriter().print(this.paymentStringFromParameters(
-                accountNumber, 
-                accountPrefix, 
-                bankCode, 
-                amount, 
-                currency, 
-                vs, 
-                ks, 
-                ss, 
-                date, 
-                message, 
+        final String paymentString = this.paymentStringFromParameters(
+                accountNumber,
+                accountPrefix,
+                bankCode,
+                amount,
+                currency,
+                vs,
+                ks,
+                ss,
+                date,
+                message,
                 request.getParameterMap(),
-                transliterate));
+                transliterate);
+        response.getWriter().print(paymentString);
         response.getWriter().flush();
         return null;
     }
-    
+
     @RequestMapping(value = "image", method = RequestMethod.GET)
     public String paymentImageFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "accountNumber", required = true) String accountNumber,
@@ -202,16 +206,16 @@ public class SpaydGeneratorCzechController {
         response.setContentType("image/png");
         response.setHeader("Access-Control-Allow-Origin", "*");
         String paymentString = this.paymentStringFromParameters(
-                accountNumber, 
-                accountPrefix, 
-                bankCode, 
-                amount, 
-                currency, 
-                vs, 
-                ks, 
-                ss, 
-                date, 
-                message, 
+                accountNumber,
+                accountPrefix,
+                bankCode,
+                amount,
+                currency,
+                vs,
+                ks,
+                ss,
+                date,
+                message,
                 request.getParameterMap(),
                 transliterate);
         BufferedImage qrCode = SpaydQRUtils.getQRCode(size, paymentString, branding);

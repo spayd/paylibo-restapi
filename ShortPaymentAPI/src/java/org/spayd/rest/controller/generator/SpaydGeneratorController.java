@@ -142,17 +142,18 @@ public class SpaydGeneratorController {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.getWriter().print(this.paymentStringFromParameters(
-                iban,
-                bic,
-                amount,
-                currency,
-                sendersReference,
-                recipientName,
-                date,
-                message,
-                request.getParameterMap(),
-                transliterate));
+        final String paymentString = this.paymentStringFromParameters(
+                  iban,
+                  bic,
+                  amount,
+                  currency,
+                  sendersReference,
+                  recipientName,
+                  date,
+                  message,
+                  request.getParameterMap(),
+                  transliterate);
+        response.getWriter().print(paymentString);
         response.getWriter().flush();
         return null;
     }
@@ -173,17 +174,18 @@ public class SpaydGeneratorController {
         response.setContentType("application/x-shortpaymentdescriptor");
         response.setHeader("Content-Disposition", "attachment; filename=\"payment_info.spayd\"");
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.getWriter().print(this.paymentStringFromParameters(
-                iban,
-                bic,
-                amount,
-                currency,
-                sendersReference,
-                recipientName,
-                date,
-                message,
-                request.getParameterMap(),
-                transliterate));
+        final String paymentString = this.paymentStringFromParameters(
+                  iban,
+                  bic,
+                  amount,
+                  currency,
+                  sendersReference,
+                  recipientName,
+                  date,
+                  message,
+                  request.getParameterMap(),
+                  transliterate);
+        response.getWriter().print(paymentString);
         response.getWriter().flush();
         return null;
     }

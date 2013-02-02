@@ -4,6 +4,7 @@
 package org.spayd.rest.controller.generator;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -128,6 +129,7 @@ public class SpaydGeneratorCzechController {
             @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
 
         // flush the output
+        response.reset();
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -163,6 +165,7 @@ public class SpaydGeneratorCzechController {
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
         // flush the output
+        response.reset();
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/x-shortpaymentdescriptor");
         response.setHeader("Content-Disposition", "attachment; filename=\"payment_info.spayd\"");
@@ -186,7 +189,7 @@ public class SpaydGeneratorCzechController {
     }
 
     @RequestMapping(value = "image", method = RequestMethod.GET)
-    public String paymentImageFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
+    public @ResponseBody byte[] paymentImageFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "accountNumber", required = true) String accountNumber,
             @RequestParam(value = "accountPrefix", required = false) String accountPrefix,
             @RequestParam(value = "bankCode", required = false) String bankCode,
@@ -203,6 +206,7 @@ public class SpaydGeneratorCzechController {
             @RequestParam(value = "branding", required = false, defaultValue = "true") boolean branding) throws IOException {
 
         // flush the output
+        response.reset();
         response.setContentType("image/png");
         response.setHeader("Access-Control-Allow-Origin", "*");
         String paymentString = this.paymentStringFromParameters(
@@ -219,8 +223,11 @@ public class SpaydGeneratorCzechController {
                 request.getParameterMap(),
                 transliterate);
         BufferedImage qrCode = SpaydQRUtils.getQRCode(size, paymentString, branding);
-        ImageIO.write(qrCode, "PNG", response.getOutputStream());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(qrCode, "PNG", baos);
+        byte[] byteArray = baos.toByteArray();
+        response.setContentLength(byteArray.length);
         response.getOutputStream().flush();
-        return null;
+        return byteArray;
     }
 }

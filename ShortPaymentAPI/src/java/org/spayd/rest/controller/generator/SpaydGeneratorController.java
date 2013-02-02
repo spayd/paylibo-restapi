@@ -4,6 +4,7 @@
 package org.spayd.rest.controller.generator;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -139,6 +140,7 @@ public class SpaydGeneratorController {
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
         // flush the output
+        response.reset();
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -170,6 +172,7 @@ public class SpaydGeneratorController {
             @RequestParam(value = "message", required = false) String message,
             @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate) throws IOException {
         // flush the output
+        response.reset();
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/x-shortpaymentdescriptor");
         response.setHeader("Content-Disposition", "attachment; filename=\"payment_info.spayd\"");
@@ -191,7 +194,7 @@ public class SpaydGeneratorController {
     }
 
     @RequestMapping(value = "image", method = RequestMethod.GET)
-    public String paymentImageFromAccount(HttpServletRequest request, HttpServletResponse response,
+    public @ResponseBody byte[] paymentImageFromAccount(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "iban", required = true) String iban,
             @RequestParam(value = "bic", required = false) String bic,
             @RequestParam(value = "amount", required = false) Number amount,
@@ -204,6 +207,7 @@ public class SpaydGeneratorController {
             @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate,
             @RequestParam(value = "branding", required = false, defaultValue = "true") boolean branding) throws IOException {
         // flush the output
+        response.reset();
         response.setContentType("image/png");
         response.setHeader("Access-Control-Allow-Origin", "*");
         String paymentString = this.paymentStringFromParameters(
@@ -218,8 +222,11 @@ public class SpaydGeneratorController {
                 request.getParameterMap(),
                 transliterate);
         BufferedImage qrCode = SpaydQRUtils.getQRCode(size, paymentString, branding);
-        ImageIO.write(qrCode, "PNG", response.getOutputStream());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(qrCode, "PNG", baos);
+        byte[] byteArray = baos.toByteArray();
+        response.setContentLength(byteArray.length);
         response.getOutputStream().flush();
-        return null;
+        return byteArray;
     }
 }

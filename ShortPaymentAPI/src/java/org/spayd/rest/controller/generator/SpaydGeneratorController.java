@@ -194,7 +194,7 @@ public class SpaydGeneratorController {
     }
 
     @RequestMapping(value = "image", method = RequestMethod.GET)
-    public @ResponseBody byte[] paymentImageFromAccount(HttpServletRequest request, HttpServletResponse response,
+    public String paymentImageFromAccount(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "iban", required = true) String iban,
             @RequestParam(value = "bic", required = false) String bic,
             @RequestParam(value = "amount", required = false) Number amount,

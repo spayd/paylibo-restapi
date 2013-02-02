@@ -189,7 +189,7 @@ public class SpaydGeneratorCzechController {
     }
 
     @RequestMapping(value = "image", method = RequestMethod.GET)
-    public @ResponseBody byte[] paymentImageFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
+    public String paymentImageFromAccountCzech(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "accountNumber", required = true) String accountNumber,
             @RequestParam(value = "accountPrefix", required = false) String accountPrefix,
             @RequestParam(value = "bankCode", required = false) String bankCode,

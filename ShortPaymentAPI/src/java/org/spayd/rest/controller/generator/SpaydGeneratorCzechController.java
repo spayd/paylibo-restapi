@@ -223,11 +223,8 @@ public class SpaydGeneratorCzechController {
                 request.getParameterMap(),
                 transliterate);
         BufferedImage qrCode = SpaydQRUtils.getQRCode(size, paymentString, branding);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(qrCode, "PNG", baos);
-        byte[] byteArray = baos.toByteArray();
-        response.setContentLength(byteArray.length);
+        ImageIO.write(qrCode, "PNG", response.getOutputStream());
         response.getOutputStream().flush();
-        return byteArray;
+        return null;
     }
 }

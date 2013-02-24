@@ -206,11 +206,7 @@ public class SpaydGeneratorController {
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "compress", required = false, defaultValue = "true") boolean transliterate,
             @RequestParam(value = "branding", required = false, defaultValue = "true") boolean branding) throws IOException {
-        // flush the output
-        response.reset();
-        response.setContentType("image/png");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        String paymentString = this.paymentStringFromParameters(
+       String paymentString = this.paymentStringFromParameters(
                 iban,
                 bic,
                 amount,
@@ -222,8 +218,17 @@ public class SpaydGeneratorController {
                 request.getParameterMap(),
                 transliterate);
         BufferedImage qrCode = SpaydQRUtils.getQRCode(size, paymentString, branding);
-        ImageIO.write(qrCode, "PNG", response.getOutputStream());
-        response.setContentLength(response.getBufferSize());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(qrCode, "PNG", baos);
+        baos.flush();
+        byte[] imageInByte = baos.toByteArray();
+        baos.close();
+        // flush the output
+        response.reset();
+        response.setContentType("image/png");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setContentLength(imageInByte.length);
+        response.getOutputStream().write(imageInByte, 0, imageInByte.length);
         response.getOutputStream().flush();
         return null;
     }
